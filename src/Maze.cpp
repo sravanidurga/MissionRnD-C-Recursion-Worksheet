@@ -34,9 +34,64 @@ more parameters .
 */
 
 #include<stdlib.h>
+int isSafe(int *M, int x, int y,int rows,int columns)
+{
+	if (x >= 0 && x < rows && y >= 0 && y < columns &&*((M+x *columns)+y) == 1)
+	
+		return 1;
+	return 0;
+}
+int solve_maze_util_1(int *maze, int x1, int y1, int x2, int y2, int rows, int columns)
+{
+	if (x1 == x2 &&y1 == y2)
+		return 1;
+	if (isSafe(maze, x1, y1, rows, columns))
+	{
+		if (solve_maze_util_1(maze, x1 - 1, y1, x2, y2, rows, columns))
+			return 1;
+		if (solve_maze_util_1(maze, x1 , y1+1, x2, y2, rows, columns))
+			return 1;
+	}
+	return 0;
+}
 
 
+int solve_maze_util(int *maze, int x1, int y1, int x2, int y2,int rows,int columns,int *A,int *flag)
+{
+	
+	if (*((maze + x2 *columns) + y2) == 0)
+		return 0;
+	if (x1 == x2 &&y1 == y2 )
+		return 1;
+	if (isSafe(maze, x1, y1,rows,columns))
+	{
+		if (solve_maze_util(maze,x1+1,y1,x2,y2,rows,columns,A,flag))
+			return 1;
+		if (solve_maze_util(maze, x1, y1+1, x2, y2, rows, columns,A,flag))
+			return 1;
+		
+		
+		
+	}
+	if (x1 == rows - 1)
+	{
+		*(A + 0) = x1;
+		*(A + 1) = y1;
+		*flag = 0;
+	}
+	return 0;
+
+}
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
+	int A[2] = { 0, 0 };
+	int flag = 1;
+	if (!(solve_maze_util(maze, x1, y1, x2, y2, rows, columns, A, &flag)))
+	{
+		if (flag == 0)
+			return solve_maze_util_1(maze, A[0], A[1], x2, y2, rows, columns);
+		else
+			return 0;
+	}
 	return 1;
 }
