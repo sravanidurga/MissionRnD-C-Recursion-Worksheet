@@ -33,8 +33,53 @@ Note : Check the function Parameters ,Its a double pointer .
 
 #include "stdafx.h"
 #include<stdlib.h>
+int *spiral_1(int rows, int columns, int **input_array, int *arr,int T,int B,int L, int R,int dir,int ind)
+{
+	int i;
+	if (T <= B && L <= R)
+	{
+		if (dir == 0)
+		{
+			for (i = L; i <= R; i++)
+				*(arr + (ind++)) = *(*(input_array + T) + i);
+			T++;
+			dir = 1;
+		}
+		else if (dir == 1)
+		{
+			for (i = T; i <= B; i++)
+				*(arr + (ind++)) = *(*(input_array + i) + R);
+			R--;
+			dir = 2;
+		}
+		else if (dir == 2)
+		{
+			for (i = R; i >= L; i--)
+				*(arr + (ind++)) = *(*(input_array + B) + i);
+			B--;
+			dir = 3;
 
+		}
+		else if (dir == 3)
+		{
+			for (i = B; i >= T; i--)
+				*(arr + (ind++)) = *(*(input_array + i) + L);
+			L++;
+			dir = 0;
+		}
+		arr=spiral_1(rows, columns, input_array, arr, T, B, L, R, dir, ind);;
+
+	}
+	return arr;
+}
 int *spiral(int rows, int columns, int **input_array)
 {
-	return NULL;
+	
+	int *arr;
+	int T = 0, B = rows - 1, L = 0, R = columns - 1,dir=0,ind=0;
+	if (input_array == NULL || rows<=0 || columns <=0)
+		return NULL;
+	arr  = (int *)malloc(sizeof(int)*(rows*columns));
+	return spiral_1(rows, columns, input_array, arr, T, B, L, R, dir, ind);
+
 }
